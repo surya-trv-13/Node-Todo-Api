@@ -5,41 +5,41 @@ const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/TodoApp',{ useNewUrlParser: true });
 const Schema = mongoose.Schema;
 
-// //Schema of the Todo collection..
-// //It is the mapping of the Todo Collection
-// var TodoSchema = new Schema({
-//   text : {
-//     type : String,
-//     required : true,
-//     minlength : 5,
-//     trim : true
-//   },
-//   status : {
-//     type : Boolean,
-//     default : false
-//   },
-//   statusAt : {
-//     type : Number,
-//     default : null
-//   }
-// });
-//
-// //Created Model of the Todo Schema...
-// //To use the schema we use it through passing it to model
-// const Todo = mongoose.model('Todo',TodoSchema);
-//
-// //Creating Todo
-// var newTask = new Todo({
-//   text : 'Compete the work given',
-//   statusAt : 3
-// });
-//
-// //Saving Todo to database
-// newTask.save().then((res) => {
-//   console.log('Added to the data base!');
-// }).catch((e) => {
-//   console.log('Unable to save the task');
-// });
+//Schema of the Todo collection..
+//It is the mapping of the Todo Collection
+var TodoSchema = new Schema({
+  text : {
+    type : String,
+    required : true,
+    minlength : 5,
+    trim : true
+  },
+  status : {
+    type : Boolean,
+    default : false
+  },
+  statusAt : {
+    type : Number,
+    default : null
+  }
+});
+
+//Created Model of the Todo Schema...
+//To use the schema we use it through passing it to model
+const Todo = mongoose.model('Todo',TodoSchema);
+
+//Creating Todo
+var newTask = new Todo({
+  text : 'Compete the work given',
+  statusAt : 3
+});
+
+//Saving Todo to database
+newTask.save().then((res) => {
+  console.log('Added to the data base!');
+}).catch((e) => {
+  console.log('Unable to save the task');
+});
 
 //Schema for Users collection
 var UserSchema = new Schema({
@@ -76,3 +76,9 @@ newUser.save().then((res) => {
 //-----------------------------------------------------------------------------
 //How mongoose select collection name and how to change it..
 //https://mongoosejs.com/docs/guide.html#collection
+//-----------------------------------------------------------------------------
+//Mongoose Validation
+//https://mongoosejs.com/docs/validation.html
+//-----------------------------------------------------------------------------
+//Mongoose Schema
+//https://mongoosejs.com/docs/guide.html
