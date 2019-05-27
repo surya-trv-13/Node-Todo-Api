@@ -6,13 +6,13 @@ MongoClient.connect('mongodb://127.0.0.1:27017',{ useNewUrlParser : true },(erro
 
   var db = client.db('Todo-App');
 
-  // db.collection('Todos').insertOne({
-  //   task : 'Something to do with Today',
-  //   status : false
-  // },(err,results) => {
-  //   assert.equal(null,err);
-  //   console.log(JSON.stringify(results.ops, undefined ,3));
-  // });
+  db.collection('Todos').insertOne({
+    task : 'Something to do with Today',
+    status : false
+  },(err,results) => {
+    assert.equal(null,err);
+    console.log(JSON.stringify(results.ops, undefined ,3));
+  });
 
   db.collection('Users').insertOne({
     name : 'Suman Mondal',
