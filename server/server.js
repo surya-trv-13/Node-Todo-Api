@@ -1,79 +1,39 @@
-const mongoose = require('mongoose');
+const express = require('express');
+const bodyParser = require('body-parser');
 
-//Connection to database using mongoose
-//try to figure out the work behind the scene of the connect
-mongoose.connect('mongodb://127.0.0.1:27017/TodoApp',{ useNewUrlParser: true });
-const Schema = mongoose.Schema;
+const {mongoose} = require('./db/mongoose');
+const {Users} = require('./model/user');
+const {Todo} = require('./model/todo');
 
-//Schema of the Todo collection..
-//It is the mapping of the Todo Collection
-var TodoSchema = new Schema({
-  text : {
-    type : String,
-    required : true,
-    minlength : 5,
-    trim : true
-  },
-  status : {
-    type : Boolean,
-    default : false
-  },
-  statusAt : {
-    type : Number,
-    default : null
-  }
+var app = express();
+
+//Use to parse the middleware request into object
+app.use(bodyParser.json());
+
+//This is sending post request from the application
+app.post('/todos',(req,res) => {
+  //creating task from request body
+  var task = new Todo({
+    text : req.body.text,
+    // statusAt : req.body.statusAt,
+    // status : req.body.status
+  });
+
+  //Saving the task
+  task.save().then((doc) => {
+    res.send(doc);
+  }).catch((err) => {
+    res.status(400).send(err);
+  }); //end of save
+}); //end of post route
+
+
+app.listen(1200,() => {
+  console.log('Connected to server 1200');
 });
-
-//Created Model of the Todo Schema...
-//To use the schema we use it through passing it to model
-const Todo = mongoose.model('Todo',TodoSchema);
-
-//Creating Todo
-var newTask = new Todo({
-  text : 'Compete the work given',
-  statusAt : 3
-});
-
-//Saving Todo to database
-newTask.save().then((res) => {
-  console.log('Added to the data base!');
-}).catch((e) => {
-  console.log('Unable to save the task');
-});
-
-//Schema for Users collection
-var UserSchema = new Schema({
-  email : {
-    type : String,
-    required : true,
-    trim : true,
-    minlength : 5
-  }
-});
-
-//Adding it to Model
-var Users = mongoose.model('Users',UserSchema);
-
-//Adding a user data
-var newUser = new Users({
-  email : 'suryanarayan88@outlook.com'
-});
-
-//Saving it to mongodb
-newUser.save().then((res) => {
-  console.log('Added a new User! ',res);
-}).catch((e) => {
-  console.log('Error found is ',e);
-});
-
-
 
 
 //Query...
-//mongoose.Promise = global.Promise;
-//No longer required
-//Check - https://stackoverflow.com/questions/51862570/mongoose-why-we-make-mongoose-promise-global-promise-when-setting-a-mongoo
-//-----------------------------------------------------------------------------
 //How mongoose select collection name and how to change it..
 //https://mongoosejs.com/docs/guide.html#collection
 //-----------------------------------------------------------------------------
