@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 //Schema of the Todo collection..
 //It is the mapping of the Todo Collection
-var TodoSchema = new Schema({
+const TodoSchema = new Schema({
   text : {
     type : String,
     required : true,
@@ -22,9 +22,9 @@ var TodoSchema = new Schema({
 
 //Created Model of the Todo Schema...
 //To use the schema we use it through passing it to model
-const Todo = mongoose.model('Todo',TodoSchema);
+var Todo = mongoose.model('Todo',TodoSchema);
 
-
+//Exported to use in other app
 module.exports = {Todo};
 
 

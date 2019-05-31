@@ -18,7 +18,6 @@ app.post('/todos',(req,res) => {
     // statusAt : req.body.statusAt,
     // status : req.body.status
   });
-
   //Saving the task
   task.save().then((doc) => {
     res.send(doc);
@@ -32,6 +31,7 @@ app.listen(1200,() => {
   console.log('Connected to server 1200');
 });
 
+module.exports = {app};
 
 //Query...
 //How mongoose select collection name and how to change it..
