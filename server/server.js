@@ -16,7 +16,7 @@ app.post('/todos',(req,res) => {
   var task = new Todo({
     text : req.body.text,
     // statusAt : req.body.statusAt,
-    // status : req.body.status
+    status : req.body.status
   });
   //Saving the task
   task.save().then((doc) => {
@@ -25,6 +25,13 @@ app.post('/todos',(req,res) => {
     res.status(400).send(err);
   }); //end of save
 }); //end of post route
+
+//Listing all the data from the database...using get function
+app.get('/todos',(req,res) => {
+  Todo.find().then((result) => {
+    res.send({result});
+  }).catch((e) => {res.status(400).send(e)})
+});//end of get route
 
 
 app.listen(1200,() => {
