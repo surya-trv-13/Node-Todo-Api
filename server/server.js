@@ -29,6 +29,7 @@ app.post('/todos',(req,res) => {
 //Listing all the data from the database...using get function
 app.get('/todos',(req,res) => {
   Todo.find().then((result) => {
+    //console.log(result);
     res.send({result});
   }).catch((e) => {res.status(400).send(e)})
 });//end of get route
