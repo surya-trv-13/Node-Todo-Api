@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const {ObjectID} = require('mongodb');
 
-const {mongoose} = require('./db/mongoose');
+const {mongoose} = require('./db/mongoose'); //For connection purpose
 const {Users} = require('./model/user');
 const {Todo} = require('./model/todo');
 
@@ -34,6 +35,20 @@ app.get('/todos',(req,res) => {
   }).catch((e) => {res.status(400).send(e)})
 });//end of get route
 
+app.get('/todos/:id',(req,res) => {
+  var id = req.params.id;
+  if(!ObjectID.isValid(id)){
+    return res.status(404).send();
+  }
+  Todo.findById(id).then((result) => {
+    if(result === null){
+      return res.status(404).send();
+    }
+    res.send({result});
+  }).catch((e) =>{
+    res.status(400).send();
+  })
+});
 
 app.listen(1200,() => {
   console.log('Connected to server 1200');
