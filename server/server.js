@@ -35,13 +35,16 @@ app.get('/todos',(req,res) => {
   }).catch((e) => {res.status(400).send(e)})
 });//end of get route
 
+//This is to get back the response for the specific data whose ID is passed in the URL.
 app.get('/todos/:id',(req,res) => {
-  var id = req.params.id;
-  if(!ObjectID.isValid(id)){
+  var id = req.params.id;   // req params reas all the parameter passed to the URL as :id
+
+  if(!ObjectID.isValid(id)){    //This will check the id is a valid id for mongoDB or not
     return res.status(404).send();
   }
-  Todo.findById(id).then((result) => {
-    if(result === null){
+
+  Todo.findById(id).then((result) => {    //This is finding One document whose ID matche as the parameter passed ,
+    if(result === null){                  // return null for faliure
       return res.status(404).send();
     }
     res.send({result});
