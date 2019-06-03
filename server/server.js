@@ -7,6 +7,7 @@ const {Users} = require('./model/user');
 const {Todo} = require('./model/todo');
 
 var app = express();
+var port = process.env.PORT || 1200;
 
 //Use to parse the middleware request into object
 app.use(bodyParser.json());
@@ -53,8 +54,8 @@ app.get('/todos/:id',(req,res) => {
   })
 });
 
-app.listen(1200,() => {
-  console.log('Connected to server 1200');
+app.listen(port,() => {
+  console.log(`Connected to port ${port}`);
 });
 
 module.exports = {app};
