@@ -16,9 +16,9 @@ Todo.remove({}).then((res) => {
 
 //This is to remove a document from the collection by finding one
 // document which match the query
-// Todo.findOneAndRemove({text : 'Something to do'}).then((result) => {
-//   console.log(result);
-// });
+Todo.findOneAndRemove({text : 'Something to do'}).then((result) => {
+  console.log(result);
+});
 
 //This is to remove a document from the collection by ID
 Users.findByIdAndRemove(id_user).then((res) => {
