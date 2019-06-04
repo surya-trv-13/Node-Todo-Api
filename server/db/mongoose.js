@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 
 //Connection to database using mongoose
 //try to figure out the work behind the scene of the connect
-mongoose.connect('mongodb://127.0.0.1:27017/TodoApp',{ useNewUrlParser: true });
+mongoose.connect('mongodb://127.0.0.1:27017/TodoApp',{
+  useNewUrlParser: true,
+  useFindAndModify: false
+});
 
 
 module.exports = {mongoose};
