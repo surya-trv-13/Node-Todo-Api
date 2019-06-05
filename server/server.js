@@ -60,11 +60,11 @@ app.delete('/todos/:id',(req,res) => {
   if(!ObjectID.isValid(id)){
     return res.status(404).send();
   }
-  Todo.findOneAndRemove(id).then((results) => {
-    if(results === null){
+  Todo.findByIdAndRemove(id).then((results) => {
+    if(!results){
       return res.status(404).send();
     }
-    res.send(results);
+    res.send({results});
   }).catch((e) => {
     res.status(400).send();
   })

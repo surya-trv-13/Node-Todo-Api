@@ -84,7 +84,7 @@ describe('GET /todos',() => {
 //This is the testing for the individual Todo in URL.
 describe('GET /todos/:id',() => {
   // Assertion 4
-  it('Should return a valid data',(done) => {
+  it('Should be valid ID',(done) => {
     request(app)
       .get(`/todos/${todos[0]._id.toHexString()}`) // we can take toHexString or can omit it it will work fine
       .expect(200)                                 // toHexString is to convert ID to string format the function
@@ -107,8 +107,46 @@ describe('GET /todos/:id',() => {
   // Assertion 6
   it('Should return 404 for invalid ID',(done) => {
     request(app)
-      .get('/todos/12345')    // just an invalid URL because of Invalid ID 
+      .get('/todos/12345')    // just an invalid URL because of Invalid ID
       .expect(404)
       .end(done);
   });
+});
+
+//This is for testing for deleting specifing documnent from the collection
+// Same test cases as finding a document through ID in URL - GET /todos/:id
+describe('DELETE /todos/:id',() => {
+  // Assertion 7
+  it('Should be valid ID',(done) => {
+    request(app)
+      .delete(`/todos/${todos[1]._id}`)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.results.text).toBe(todos[1].text);
+      })
+      .end((err,res) => {
+        if(err) return done(err);
+
+        Todo.findById(todos[1]._id).then((todo) => {
+          expect(todo).toBe(null);    // Check for toNotExist function
+          done();
+        }).catch((e) => done(e));
+      });
+    });
+
+    // Assertion 8
+    it('Should return 404 for ID not found',(done) => {
+      var id_temp = new ObjectID();
+      request(app)
+        .delete(`/todos/${id_temp}`)
+        .expect(404)
+        .end(done);
+    });
+    // Assertion 9
+    it('Should return 404 for invalid ID',(done) => {
+      request(app)
+        .delete('/todos/123456')
+        .expect(404)
+        .end(done)
+    });
 });
