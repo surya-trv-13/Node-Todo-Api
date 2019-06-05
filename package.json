@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/server.js",
-    "test": "mocha server/**/*.test.js",
+    /* This is tweking the test command a liitle bit as
+      first command is to assign NODE_ENV to test in Linux as needed in Heroku
+      second command is for Windows to run locally in the machine
+      third is common for both the previous commands to run mocha test case */
+    "test": "export NODE_ENV=test || SET \"NODE_ENV=test\" && mocha server/**/*.test.js",
     "test-1": "nodemon --exec \"npm test\""
   },
   "engines": {

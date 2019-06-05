@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 //Connection to database using mongoose
 //try to figure out the work behind the scene of the connect
-mongoose.connect('mongodb://127.0.0.1:27017/TodoApp',{
+// process.env.MONGODB_URI is an Environment Variable which is used to get the heroku server for the connection
+mongoose.connect((process.env.MONGODB_URI,{
   useNewUrlParser: true,
   useFindAndModify: false
 });

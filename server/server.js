@@ -1,3 +1,14 @@
+var env = process.env.NODE_ENV || 'development' ;
+
+if(env === 'development'){
+  process.env.PORT = 1200;
+  process.env.MONGODB_URI = 'mongodb://127.0.0.1:27017/TodoApp';
+}else if(env === 'test'){
+  process.env.PORT = 1200;
+  process.env.MONGODB_URI = 'mongodb://127.0.0.1:27017/TodoAppTest';
+}
+
+
 const _ = require('lodash');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -8,7 +19,7 @@ const {Users} = require('./model/user');
 const {Todo} = require('./model/todo');
 
 var app = express();
-var port = process.env.PORT || 1200;
+var port = process.env.PORT;
 
 //Use to parse the middleware request into object
 app.use(bodyParser.json());
