@@ -1,4 +1,4 @@
-require(./config/config);
+require('./config/config');
 
 const _ = require('lodash');
 const express = require('express');
@@ -86,23 +86,24 @@ app.patch('/todos/:id',(req,res) => {
   }
 
   if(_.isBoolean(body.status) && body.status){  // This checks if the ststus enterd by the user is boolean and the value is true
-    body.statusAt : new Date().getTime()       // This is added by the programmer as we do not want to update it
+    body.statusAt = new Date().getTime()       // This is added by the programmer as we do not want to update it
                                                 // by the user
   }else{
-    body.status : false,                        // else it is left as default values
-    body.statusAt : null                        // with no change
+    body.status = false,                        // else it is left as default values
+    body.statusAt = null                        // with no change
   }
 
   // This is update method for mongoose ... it is similar to the update method of MongoDB
   // It takes a $set to set the value, it takes 'new' key which works same as 'returnOrginal'
   // returnOrginal return the older version whereas new return the updated version of document
-  Todo.findByIdUpdate(id,{$set : body},{new : true}).then((result) => {
+  Todo.findByIdAndUpdate(id,{$set : body},{new : true}).then((result) => {
     if(result === null){
       return res.status(404).send();
     }
-    res.send({res});
+    res.send({result});
   }).catch((e) => {
-    res.status(400).send();
+    console.log(e);
+    res.status(400).send(e);
   });
 });
 

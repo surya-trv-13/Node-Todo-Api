@@ -11,7 +11,9 @@ var todos = [{
   text : 'First todo'
 },{
   _id: new ObjectID(),
-  text : 'Second Todo'
+  text : 'Second Todo',
+  status : true,
+  statusAt : 123
 }];
 
 beforeEach((done) => {
@@ -128,7 +130,7 @@ describe('DELETE /todos/:id',() => {
         if(err) return done(err);
 
         Todo.findById(todos[1]._id).then((todo) => {
-          expect(todo).toBe(null);    // Check for toNotExist function
+          expect(todo).toBeNull();    // Check for toNotExist function is Deprecated hence use toBeNull
           done();
         }).catch((e) => done(e));
       });
@@ -149,4 +151,56 @@ describe('DELETE /todos/:id',() => {
         .expect(404)
         .end(done)
     });
+});
+
+describe('PATCH /todos/:id', () => {
+  it('should update the document',(done) => {
+    var text = 'Updated Value';
+    request(app)
+      .patch(`/todos/${todos[1]._id}`)
+      .send({
+        status : true,
+        text
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.result.text).not.toBe(todos[1].text);
+        expect(res.body.result.status).toBe(true);
+        expect(typeof res.body.result.statusAt).toBe('number');
+      })
+      .end((err,res) => {
+        if(err){ done(err);}
+        Todo.findById(todos[1]._id).then((res) => {
+          // expect(res.text).not.toBe(todos[1].text);
+          expect(res.text).toBe(text);
+          expect(res.status).toBe(true);
+          expect(typeof res.statusAt).toBe('number');
+          done();
+        }).catch((err) => done(err));
+      });
+  });
+
+  it('Should not update the value',(done) => {
+    var text = 'Surya is my name'
+    request(app)
+      .patch(`/todos/${todos[0]._id}`)
+      .send({
+        status : false,
+        text
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.result.text).toBe('Surya is my name');
+        expect(res.body.result.statusAt).toBe(null);
+      })
+      .end((err,res) => {
+        if(err) {done(err);}
+
+        Todo.findById(todos[0]._id).then((res) => {
+          expect(res.text).toBe('Surya is my name');
+          expect(res.statusAt).toBeNull();
+          done();
+        }).catch((err) => done(err));
+      });
+  });
 });
