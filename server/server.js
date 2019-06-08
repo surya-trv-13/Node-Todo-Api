@@ -11,10 +11,10 @@ const {Todo} = require('./model/todo');
 
 var app = express();
 var port = process.env.PORT;
-
+// -------------------------------------------------------------------------------
 //Use to parse the middleware request into object
 app.use(bodyParser.json());
-
+// -------------------------------------------------------------------------------
 //This is sending post request from the application
 app.post('/todos',(req,res) => {
   //creating task from request body
@@ -30,7 +30,7 @@ app.post('/todos',(req,res) => {
     res.status(400).send(err);
   }); //end of save
 }); //end of post route
-
+// -------------------------------------------------------------------------------
 //Listing all the data from the database...using get function
 app.get('/todos',(req,res) => {
   Todo.find().then((result) => {
@@ -56,7 +56,7 @@ app.get('/todos/:id',(req,res) => {
     res.status(400).send();
   })
 });
-
+// -------------------------------------------------------------------------------
 app.delete('/todos/:id',(req,res) => {
   var id = req.params.id;
 
@@ -74,13 +74,13 @@ app.delete('/todos/:id',(req,res) => {
     res.status(400).send();
   })
 });
-
+// -------------------------------------------------------------------------------
 // Update the document using mongoose
 // Little comlicated can watch video
 app.patch('/todos/:id',(req,res) => {
   var id = req.params.id;
-  var body = _.pick(req.body,['status','text']); // This is a lodash method used to pick objects whic required
-                                                  // in the object while updating
+  var body = _.pick(req.body,['status','text']); // This is a lodash method used to pick parameters which required
+                                                  // in the object while updating and make it a separate object
   if(!ObjectID.isValid(id)){
     return res.status(404).send();
   }
@@ -106,6 +106,24 @@ app.patch('/todos/:id',(req,res) => {
     res.status(400).send(e);
   });
 });
+// -------------------------------------------------------------------------------
+//This is the post method to add User to database
+app.post('/users',(req,res) => {
+  var body = _.pick(req.body,['email','password']);
+  var user = new Users(body);
+
+  user.save().then(() => {
+    return user.getAuthToken();   // This call the getAuthToken() method defined in  user.js | it returns the save method defined to then callback...
+  }).then((token) => {
+    res.header('x-auth', token).send(user); // Here the token in the attribute saves the content in the array to the database and get the value for the token
+  }).catch((e) => {                         // Header takes two arguments in form of key value pair | first take the key which starts with 'x-' which indicate custom header another is the key
+    res.status(400).send(e);
+  })
+
+});
+
+
+
 
 app.listen(port,() => {
   console.log(`Connected to port ${port}`);
