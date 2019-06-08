@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const _ = require('lodash');
 
 const Schema = mongoose.Schema;
 
@@ -33,6 +34,13 @@ var UserSchema = new Schema({
     }
   }]
 });
+
+UserSchema.methods.toJSON = function() {  // This instance method is to send only the id and email property
+  var user = this ;                       // This is called implicit within send if the method name is toJSON
+  var userObject = user.toObject();       // else can call inside the send as send(user.toJSON) <- this
+
+  return _.pick(userObject,['_id','email']);
+}
 
 //This is to generate Authentication Token which will make token for the
 //_id of the user database
