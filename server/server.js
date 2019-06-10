@@ -8,6 +8,7 @@ const {ObjectID} = require('mongodb');
 const {mongoose} = require('./db/mongoose'); //For connection purpose
 const {Users} = require('./model/user');
 const {Todo} = require('./model/todo');
+const {authenticate} =require('./middleware/authenticate');
 
 var app = express();
 var port = process.env.PORT;
@@ -121,7 +122,12 @@ app.post('/users',(req,res) => {
   })
 
 });
+// --------------------------------------------------------------------------------
 
+//This route is to get the individual route after entering the header in the header section
+app.get('/users/me',authenticate,(req,res) => {
+  res.send(req.result);
+});
 
 
 

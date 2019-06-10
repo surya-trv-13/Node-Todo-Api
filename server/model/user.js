@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 const Schema = mongoose.Schema;
 
@@ -35,13 +36,14 @@ var UserSchema = new Schema({
   }]
 });
 
+// --------------------------------------------------------------------------------------------------------------
 UserSchema.methods.toJSON = function() {  // This instance method is to send only the id and email property
   var user = this ;                       // This is called implicit within send if the method name is toJSON
   var userObject = user.toObject();       // else can call inside the send as send(user.toJSON) <- this
 
-  return _.pick(userObject,['_id','email']);
+  return _.pick(userObject,['_id','email','password']);
 }
-
+// --------------------------------------------------------------------------------------------------------------
 //This is to generate Authentication Token which will make token for the
 //_id of the user database
 UserSchema.methods.getAuthToken = function() {
@@ -58,6 +60,41 @@ UserSchema.methods.getAuthToken = function() {
     return token;
   });
 }
+// --------------------------------------------------------------------------------------------------------------
+UserSchema.statics.findByToken = function(token) {
+  var Users = this;
+  var decode;
+
+  try{
+    decode = jwt.verify(token,'SecretMessage');
+  }catch(e){
+    return new Promise((resolve,reject) => {
+      reject();
+    });
+  }
+  return Users.findOne({
+    _id : decode._id,
+    'tokens.token' : token,
+    'tokens.access' : 'auth'
+  })
+};
+// --------------------------------------------------------------------------------------------------------------
+UserSchema.pre('save',function(next) {
+    var user = this;
+
+    if(user.isModified('password')){
+      bcrypt.genSalt(10,(err,salt) => {
+        bcrypt.hash(user.password,salt,(err,hash) => {
+          user.password = hash;
+          next();
+        });
+      });
+    }else{
+      next();
+    }
+});
+
+
 
 //Adding it to Model
 var Users = mongoose.model('Users',UserSchema);

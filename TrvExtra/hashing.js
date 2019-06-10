@@ -1,20 +1,38 @@
 const {SHA256} = require('crypto-js');
 const jwt = require('jsonwebtoken');
+const bycrypt = require('bcryptjs');
 
-var data = {
-  name:  'The Real Virus - 13'
-};
+var password = 'shreya@13';
+var encodedPassword = '$2a$10$roBTrBCRbuYMNv2vRFE8L.6gRHO9Yzh9ogxQ4nsCA5pxI9OjLHh.';
 
-// This is implemetation of SHA256
-var hash = SHA256(JSON.stringify(data) + 'secret').toString();
-console.log(JSON.stringify(hash));
+bycrypt.genSalt(10,(err,salt) => {
+  bycrypt.hash(password,salt,(err,hash) => {
+    encodedPassword = hash
+    console.log(hash);
+  });
+});
 
-// This is implemetation of jwt(Java Web Token)
-//This takes only the
-var token = jwt.sign(data, 'secret'); //This encode the message
+if(bycrypt.compare(encodedPassword,password)){
+  console.log('true');
+}else{
+  console.log('false');
+}
 
-var user = jwt.verify(token,'secret'); // This decode the message
-console.log(`User Data ${JSON.stringify(user)}`);
+
+// var data = {
+//   name:  'The Real Virus - 13'
+// };
+//
+// // This is implemetation of SHA256
+// var hash = SHA256(JSON.stringify(data) + 'secret').toString();
+// console.log(JSON.stringify(hash));
+//
+// // This is implemetation of jwt(Java Web Token)
+// //This takes only the
+// var token = jwt.sign(data, 'secret'); //This encode the message
+//
+// var user = jwt.verify(token,'secret'); // This decode the message and return the object
+// console.log(`User Data ${JSON.stringify(user)}`);
 
 
 // var message = 'Suryanarayan Rath';
