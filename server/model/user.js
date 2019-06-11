@@ -41,7 +41,7 @@ UserSchema.methods.toJSON = function() {  // This instance method is to send onl
   var user = this ;                       // This is called implicit within send if the method name is toJSON
   var userObject = user.toObject();       // else can call inside the send as send(user.toJSON) <- this
 
-  return _.pick(userObject,['_id','email','password']);
+  return _.pick(userObject,['_id','email']);
 }
 // --------------------------------------------------------------------------------------------------------------
 //This is to generate Authentication Token which will make token for the
@@ -79,6 +79,8 @@ UserSchema.statics.findByToken = function(token) {
   })
 };
 // --------------------------------------------------------------------------------------------------------------
+//This is MONGOOSE MIDDLEWARE which is used for the hashing the password...
+//the pre method is used to get call before saving the data in the data base...
 UserSchema.pre('save',function(next) {
     var user = this;
 
@@ -93,7 +95,24 @@ UserSchema.pre('save',function(next) {
       next();
     }
 });
+// --------------------------------------------------------------------------------------------------------------
+UserSchema.statics.findByCredential = function(email,password){
+  var Users = this;
 
+  return Users.findOne({email}).then((user) => {
+    if(!user){
+      return Promise.reject();
+    }
+
+    return new Promise((resolve,reject) => {
+      if(bcrypt.compare(user.password,password)){
+        resolve(user);
+      }else{
+        reject();
+      }
+    });
+  });
+}
 
 
 //Adding it to Model
