@@ -8,7 +8,8 @@ var authenticate = (req,res,next) => {
       res.status(401).send();
     }
 
-    req.result = result;
+    req.user = result; // To view the logged in document and calling logOut function
+    req.token = token; //taken for log out
     next();
   }).catch((e) => {
     res.status(401).send();

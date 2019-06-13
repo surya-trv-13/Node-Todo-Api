@@ -125,7 +125,7 @@ app.post('/users',(req,res) => {
 
 //This route is to get the individual route after entering the header in the header section
 app.get('/users/me',authenticate,(req,res) => {
-  res.send(req.result);
+  res.send(req.user);
 });
 
 // --------------------------------------------------------------------------------
@@ -144,7 +144,15 @@ app.post('/users/login',(req,res) => {
   });
 });
 
-
+// --------------------------------------------------------------------------------
+// Log out a user This will delete a token from the database 
+app.delete('/users/me/token', authenticate , (req,res) => {
+  req.user.logOut(req.token).then(() => {
+    res.status(200).send();
+  },() => {
+    res.status(400).send();
+  });
+});
 
 app.listen(port,() => {
   console.log(`Connected to port ${port}`);

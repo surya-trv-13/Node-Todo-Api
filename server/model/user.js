@@ -61,6 +61,18 @@ UserSchema.methods.getAuthToken = function() {
   });
 }
 // --------------------------------------------------------------------------------------------------------------
+// This is the method used for logOut here the user data base is updated by deleting a patrticular token...
+// $pull is used to delete a element from the array
+UserSchema.methods.logOut = function(token) {
+  var user = this;
+
+  return user.update({
+    $pull : {
+      tokens : {token}
+    }
+  })
+}
+// --------------------------------------------------------------------------------------------------------------
 UserSchema.statics.findByToken = function(token) {
   var Users = this;
   var decode;
