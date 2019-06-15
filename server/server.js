@@ -17,12 +17,11 @@ var port = process.env.PORT;
 app.use(bodyParser.json());
 // -------------------------------------------------------------------------------
 //This is sending post request from the application
-app.post('/todos',(req,res) => {
+app.post('/todos',authenticate,(req,res) => {
   //creating task from request body
   var task = new Todo({
     text : req.body.text,
-    // statusAt : req.body.statusAt,
-    status : req.body.status
+    owner : req.user._id
   });
   //Saving the task
   task.save().then((doc) => {
@@ -33,8 +32,8 @@ app.post('/todos',(req,res) => {
 }); //end of post route
 // -------------------------------------------------------------------------------
 //Listing all the data from the database...using get function
-app.get('/todos',(req,res) => {
-  Todo.find().then((result) => {
+app.get('/todos',authenticate,(req,res) => {
+  Todo.find({owener : req.user._id}).then((result) => {
     //console.log(result);
     res.send({result});
   }).catch((e) => {res.status(400).send(e)})

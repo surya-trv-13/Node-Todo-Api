@@ -17,6 +17,10 @@ const TodoSchema = new Schema({
   statusAt : {
     type : Number,
     default : null
+  },
+  owner : {
+    type : Schema.Types.ObjectId,
+    required : true
   }
 });
 
