@@ -40,6 +40,7 @@ app.get('/todos',(req,res) => {
   }).catch((e) => {res.status(400).send(e)})
 });//end of get route
 
+//--------------------------------------------------------------------------------
 //This is to get back the response for the specific data whose ID is passed in the URL.
 app.get('/todos/:id',(req,res) => {
   var id = req.params.id;   // req params reas all the parameter passed to the URL as :id
@@ -139,13 +140,12 @@ app.post('/users/login',(req,res) => {
       res.header('x-auth', token).send(user);
     });
   }).catch((e) => {
-    console.log(e);
     res.status(400).send();
   });
 });
 
 // --------------------------------------------------------------------------------
-// Log out a user This will delete a token from the database 
+// Log out a user This will delete a token from the database
 app.delete('/users/me/token', authenticate , (req,res) => {
   req.user.logOut(req.token).then(() => {
     res.status(200).send();
