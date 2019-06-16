@@ -49,7 +49,7 @@ UserSchema.methods.toJSON = function() {  // This instance method is to send onl
 UserSchema.methods.getAuthToken = function() {
   var user = this;    // This takes the user variable all the information of the user of that caller
   access = 'auth';    //this is the access value i.e. what is the token is for..
-  token = jwt.sign({_id : user._id.toHexString(),access},'SecretMessage').toString();
+  token = jwt.sign({_id : user._id.toHexString(),access},process.env.JWT_SECRET).toString();
   // ^This make the token to store the object containing the _id and access property encoding them
 
   user.tokens = user.tokens.concat([{access,token}]); // This pushes it to the array of tokens whic present in USerSchema
@@ -73,12 +73,14 @@ UserSchema.methods.logOut = function(token) {
   })
 }
 // --------------------------------------------------------------------------------------------------------------
+// This is used to find the user using the x-auth token passed
+// decode will decode the id property and it will passed through the findOne query
 UserSchema.statics.findByToken = function(token) {
   var Users = this;
   var decode;
 
   try{
-    decode = jwt.verify(token,'SecretMessage');
+    decode = jwt.verify(token,process.env.JWT_SECRET);
   }catch(e){
     return new Promise((resolve,reject) => {
       reject();
@@ -91,23 +93,7 @@ UserSchema.statics.findByToken = function(token) {
   })
 };
 // --------------------------------------------------------------------------------------------------------------
-//This is MONGOOSE MIDDLEWARE which is used for the hashing the password...
-//the pre method is used to get call before saving the data in the data base...
-UserSchema.pre('save',function(next) {
-    var user = this;
-
-    if(user.isModified('password')){
-      bcrypt.genSalt(10,(err,salt) => {
-        bcrypt.hash(user.password,salt,(err,hash) => {
-          user.password = hash;
-          next();
-        });
-      });
-    }else{
-      next();
-    }
-});
-// --------------------------------------------------------------------------------------------------------------
+//This will take the email and password and check if there any user present
 UserSchema.statics.findByCredential = function(email,password){
   var Users = this;
 
@@ -125,6 +111,24 @@ UserSchema.statics.findByCredential = function(email,password){
     });
   });
 }
+// --------------------------------------------------------------------------------------------------------------
+//This is MONGOOSE MIDDLEWARE which is used for the hashing the password...
+//the pre method is used to get call before saving the data in the data base...
+UserSchema.pre('save',function(next) {
+    var user = this;
+
+    if(user.isModified('password')){
+      bcrypt.genSalt(10,(err,salt) => {
+        bcrypt.hash(user.password,salt,(err,hash) => {
+          user.password = hash;
+          next();
+        });
+      });
+    }else{
+      next();
+    }
+});
+
 
 
 //Adding it to Model
