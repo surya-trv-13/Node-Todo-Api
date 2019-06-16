@@ -41,14 +41,17 @@ app.get('/todos',authenticate,(req,res) => {
 
 //--------------------------------------------------------------------------------
 //This is to get back the response for the specific data whose ID is passed in the URL.
-app.get('/todos/:id',(req,res) => {
+app.get('/todos/:id',authenticate,(req,res) => {
   var id = req.params.id;   // req params reas all the parameter passed to the URL as :id
 
   if(!ObjectID.isValid(id)){    //This will check the id is a valid id for mongoDB or not
     return res.status(404).send();
   }
 
-  Todo.findById(id).then((result) => {    //This is finding One document whose ID matche as the parameter passed ,
+  Todo.findOne({
+    _id : id,
+    owner : req.user._id
+  }).then((result) => {    //This is finding One document whose ID matche as the parameter passed ,
     if(result === null){                  // return null for faliure
       return res.status(404).send();
     }
@@ -58,7 +61,7 @@ app.get('/todos/:id',(req,res) => {
   })
 });
 // -------------------------------------------------------------------------------
-app.delete('/todos/:id',(req,res) => {
+app.delete('/todos/:id',authenticate,(req,res) => {
   var id = req.params.id;
 
   if(!ObjectID.isValid(id)){
@@ -66,7 +69,10 @@ app.delete('/todos/:id',(req,res) => {
   }
   // Delete the document using mongoose for more can check
   // TrvExtra/mongoose-remove.js
-  Todo.findByIdAndRemove(id).then((results) => {
+  Todo.findOneAndRemove({
+    _id : id,
+    owner : req.user._id
+  }).then((results) => {
     if(!results){
       return res.status(404).send();
     }
@@ -78,7 +84,7 @@ app.delete('/todos/:id',(req,res) => {
 // -------------------------------------------------------------------------------
 // Update the document using mongoose
 // Little comlicated can watch video
-app.patch('/todos/:id',(req,res) => {
+app.patch('/todos/:id',authenticate,(req,res) => {
   var id = req.params.id;
   var body = _.pick(req.body,['status','text']); // This is a lodash method used to pick parameters which required
                                                   // in the object while updating and make it a separate object
@@ -97,7 +103,7 @@ app.patch('/todos/:id',(req,res) => {
   // This is update method for mongoose ... it is similar to the update method of MongoDB
   // It takes a $set to set the value, it takes 'new' key which works same as 'returnOrginal'
   // returnOrginal return the older version whereas new return the updated version of document
-  Todo.findByIdAndUpdate(id,{$set : body},{new : true}).then((result) => {
+  Todo.findOneAndUpdate({ _id : id , owner : req.user._id },{$set : body},{new : true}).then((result) => {
     if(result === null){
       return res.status(404).send();
     }
