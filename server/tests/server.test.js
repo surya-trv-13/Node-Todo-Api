@@ -5,23 +5,10 @@ const{ObjectID} = require('mongodb');
 const {app} = require('./../server');
 const {Todo} = require('./../model/todo');
 const {Users} = require('./../model/user');
+const {todos,populateTodos,users,populateUsers} =require('./seed/seed');
 
-var todos = [{
-  _id : new ObjectID(),
-  text : 'First todo'
-},{
-  _id: new ObjectID(),
-  text : 'Second Todo',
-  status : true,
-  statusAt : 123
-}];
-
-beforeEach((done) => {
-  //Todo.remove({}).then(() => done()); --> Deprecated version
-  Todo.deleteMany({}).then(() => {
-    Todo.insertMany(todos);
-  }).then(() => done());
-});
+beforeEach(populateUsers);
+beforeEach(populateTodos);
 
 describe('POST /todos',() => {
   // Assertion 1
@@ -203,4 +190,76 @@ describe('PATCH /todos/:id', () => {
         }).catch((err) => done(err));
       });
   });
+});
+
+describe('GET /users/me',() => {
+  it('should return 200 for the authenticated user',(done) => {
+    request(app)
+      .get('/users/me')
+      .set('x-auth',users[0].tokens[0].token)
+      .expect(200)
+      .expect((res) => {
+        expect(res.body._id).toBe(users[0]._id);
+        expect(res.body.email).toBe(users[0]._id);
+      })
+      .end(done);
+  });
+
+  it('should return 401 for un-authenticate users',(done) => {
+    request(app)
+      .get('/users/me')
+      .expect(401)
+      .expect((res) => {
+        expect(res.body).toEqual({});
+      })
+      .end(done);
+  });
+});
+
+describe('POST /users',() => {
+  it('should signup a user to the database',(done) => {
+    var email = 'snr@gmail.com';
+    var password = '123asdf';
+
+    request(app)
+      .post('/users')
+      .send({email,password})
+      .expect(200)
+      .expect((res) => {
+        expect(res.headers['x-auth']).toExist();    // headers could not use '.' dot operator for assigning 'x-auth' as it contain '-' so it took [] for assigning...
+        expect(res.body.email).toBe(users[0].email);
+      })
+      .end((err) => {
+        if(err){
+        return done(err);
+        }
+
+        Users.findOne({email}).then((user) => {
+        expect(user).toExist();
+        expect(user.password).toNotBe(password);
+        done();
+      });
+    });
+  });
+
+  it('should return validation error for invalid data',(done) => {
+    var email = 'anr.ham.com';
+    var password = 'is';
+    request(app)
+      .post('/users')
+      .send({email,password})
+      .expect(400)
+      .end(done);
+    });
+
+    it('should not create user if still is database',(done) => {
+      var email = users[0].email;
+      var password = users[0].password;
+
+      request(app)
+        .post('/users')
+        .send({email,password})
+        .expect(400)
+        .end(done);
+    });
 });
