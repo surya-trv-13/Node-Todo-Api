@@ -314,3 +314,22 @@ describe('POST /users/login',() => {
       });
   });
 });
+
+describe('DELETE /users/me/login',() => {
+  it('should log out the user from the data base',() => {
+    request(app)
+      .delete('/users/me/token')
+      .set('x-auth',users[0].tokens[0].token)     //this set the x-auth for the users[0] which has previously added the
+      .expect(200)
+      .end((err) => {
+        if(err){
+          return done(err);
+        }
+
+        Users.findOne(users[0]._id).then((users) => {
+          expect(users.tokens.length).toBe(0);
+          done();
+        });
+      });
+  });
+});
