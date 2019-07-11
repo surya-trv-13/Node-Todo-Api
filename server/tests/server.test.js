@@ -238,7 +238,7 @@ describe('POST /users',() => {
         expect(user).toExist();
         expect(user.password).toNotBe(password);
         done();
-      });
+      }).catch((e) => done(e));
     });
   });
 
@@ -262,4 +262,55 @@ describe('POST /users',() => {
         .expect(400)
         .end(done);
     });
+});
+
+describe('POST /users/login',() => {
+  it('should log in user',(done) => {
+    request(app)
+      .post('/users/login')
+      .send({
+        email : users[1].email,
+        password : users[1].password
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.headers['x-auth']).toExist();
+      })
+      .end((err) => {
+        if(err){
+          return done(err);
+        }
+
+        Users.findById(users[1]._id).then((users) => {
+          expect(user.tokens[0]).toInclude({
+            access : 'auth',
+            token : user.headers['x-auth'];
+          });
+          done();
+        }).catch((e) => done(e));
+      });
+  });
+
+  it('invalid credential',(done) => {
+    request(app)
+      .post('/users/login')
+      .send({
+        email : users[1].email,
+        password : users[1].password + 'sbj'
+      })
+      .expect(200)
+      .expect((res) => {
+        expect(res.headers['x-auth']).toBeNull();
+      })
+      .end((err) => {
+        if(err){
+          return done(err);
+        }
+
+        Users.findById(users[1]._id).then((users) => {
+          expect(user.tokens.length).toBe(0);
+          done();
+        }).catch((e) => done(e));
+      });
+  });
 });
