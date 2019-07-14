@@ -17,12 +17,12 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "crypto-js": "^3.1.9-1",
-    "express": "^4.17.0",
+    "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.11",
-    "mongodb": "^3.2.6",
-    "mongoose": "^5.5.11",
-    "validator": "^11.0.0"
+    "lodash": "^4.17.14",
+    "mongodb": "^3.2.7",
+    "mongoose": "^5.6.4",
+    "validator": "^11.1.0"
   },
   "devDependencies": {
     "expect": "^24.8.0",
