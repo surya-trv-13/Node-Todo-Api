@@ -2,21 +2,25 @@ const {SHA256} = require('crypto-js');
 const jwt = require('jsonwebtoken');
 const bycrypt = require('bcryptjs');
 
-var password = 'shreya@13';
-var encodedPassword = '$2a$10$roBTrBCRbuYMNv2vRFE8L.6gRHO9Yzh9ogxQ4nsCA5pxI9OjLHh.';
+var password = 'surya';
+var encodedPassword = '$2a$10$HlWBjkP38ivqgijsRWcnTexGEXY2ag5DT9BDHIwpm1kUNu50uVVDK';
+
 
 bycrypt.genSalt(10,(err,salt) => {
   bycrypt.hash(password,salt,(err,hash) => {
-    encodedPassword = hash
-    console.log(hash);
+    //encodedPassword = hash
+    // console.log(hash);
   });
 });
 
-if(bycrypt.compare(encodedPassword,password)){
-  console.log('true');
-}else{
-  console.log('false');
-}
+bycrypt.compare(password,encodedPassword,(err,res) => {
+  if(res){
+    console.log('true');
+  }else {
+    console.log('false');
+  }
+});
+
 
 
 // var data = {

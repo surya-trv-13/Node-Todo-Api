@@ -66,7 +66,7 @@ UserSchema.methods.getAuthToken = function() {
 UserSchema.methods.logOut = function(token) {
   var user = this;
 
-  return user.update({
+  return user.updateOne({
     $pull : {
       tokens : {token}
     }
@@ -103,11 +103,13 @@ UserSchema.statics.findByCredential = function(email,password){
     }
 
     return new Promise((resolve,reject) => {
-      if(bcrypt.compare(user.password,password)){
-        resolve(user);
-      }else{
-        reject();
-      }
+      bcrypt.compare(password,user.password,(err,res) => {    // This is the right way to compare the password with the hashed one ,| next , int the compare method we need to add the (<string containing password in it> and then <the hashed password in the database>).
+        if(res){
+          resolve(user);
+        }else{
+          reject();
+        }
+      });
     });
   });
 }

@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 // process.env.MONGODB_URI is an Environment Variable which is used to get the heroku server for the connection
 mongoose.connect(process.env.MONGODB_URI,{
   useNewUrlParser: true,
-  useFindAndModify: false
+  useFindAndModify: false,
+   useCreateIndex: true
 });
 
 

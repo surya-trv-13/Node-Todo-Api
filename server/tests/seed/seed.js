@@ -17,26 +17,33 @@ var users =[{
 },{
   _id : userTwoId,
   email : 'ipsipucchi@gmail.com',
-  password : 'userTwoPass'
+  password : 'userTwoPass',
+  tokens : [{
+    access : 'auth',
+    token : jwt.sign({_id : userTwoId,access : 'auth'},process.env.JWT_SECRET)
+  }]
 }];
 
 var todos = [{
   _id : new ObjectID(),
-  text : 'First todo'
+  text : 'First todo',
+  owner : userOneId
 },{
   _id: new ObjectID(),
   text : 'Second Todo',
   status : true,
-  statusAt : 123
+  statusAt : 123,
+  owner : userTwoId
 }];
 
 const populateUsers = (done) => {
   Users.deleteMany({}).then(() => {
-    var userOne = new User(users[0]).save();
-    var userTwo = new User(users[1]).save();
+    var userOne = new Users(users[0]).save();
+    var userTwo = new Users(users[1]).save();
 
     return Promise.all([userOne,userTwo]);    // This will take "array of promises" and it will return...
-  }).then(() => done());
+  }).then(() => done())
+  .catch(e => {return done(e)});
 };
 
 

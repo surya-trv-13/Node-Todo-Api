@@ -33,7 +33,7 @@ app.post('/todos',authenticate,(req,res) => {
 // -------------------------------------------------------------------------------
 //Listing all the data from the database...using get function
 app.get('/todos',authenticate,(req,res) => {
-  Todo.find({owener : req.user._id}).then((result) => {
+  Todo.find({owner : req.user._id}).then((result) => {
     //console.log(result);
     res.send({result});
   }).catch((e) => {res.status(400).send(e)})
@@ -51,7 +51,7 @@ app.get('/todos/:id',authenticate,(req,res) => {
   Todo.findOne({
     _id : id,
     owner : req.user._id
-  }).then((result) => {    //This is finding One document whose ID matche as the parameter passed ,
+  }).then((result) => {    //This is finding One document whose ID matches as the parameter passed ,
     if(result === null){                  // return null for faliure
       return res.status(404).send();
     }
@@ -139,10 +139,9 @@ app.get('/users/me',authenticate,(req,res) => {
 //POST /user/login
 app.post('/users/login',(req,res) => {
   var body = _.pick(req.body,['email','password']);
-
   Users.findByCredential(body.email,body.password).then((user) => {
     return user.getAuthToken().then((token) => {
-      res.header('x-auth', token).send(user);
+      res.header('x-auth', token).send(user);       //res.header() is a method which set header to the post request... whereas the res.headers['x-auth'] containsthe value of the header mentioned in the []...
     });
   }).catch((e) => {
     res.status(400).send();
